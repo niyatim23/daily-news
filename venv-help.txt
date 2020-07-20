@@ -1,0 +1,10 @@
+To activate virtual environment
+python3 -m venv test-flask
+source test-flask/bin/activate
+
+
+To run a python file in flask
+export FLASK_APP=test-flask-hello-world.py
+flask run
+
+

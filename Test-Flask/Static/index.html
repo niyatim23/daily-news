@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://d3js.org/d3.v4.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+
+	<style type="text/css">
+		.row-1 {
+			margin-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+			width: 825px;
+		}
+		.row-1:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+		.column-1 {
+			float: left;
+			height: 230px;
+		}
+		.left-1 {
+			width: 135px;
+			padding-right: 30px;
+		}
+		.right-1 {
+			width: 265px;
+			background-color: #f4f4f3;
+		}
+		.middle-1 {
+			width: 375px;
+			padding-right: 20px; 
+			position: relative;
+		}
+		.vertical-button-group .button {
+			height: 35px;
+			width: 135px;
+			border: 1px solid #b7b6b4;
+			text-align: center;
+			font-size: 16px;
+			display: block;		
+			font-family: "Georgia";
+			color: #161616; 
+			background-color: #f4f4f3;
+		}
+		.vertical-button-group .button:hover, .show-more:hover {
+			background-color: #4CAF50 !important;
+			transition: .5s !important;
+			color: white !important;
+		}
+
+		.vertical-button-group .button:not(:last-child) {
+			border-bottom: none; 
+		}
+		.selected-menu-item {
+			color: white !important;
+			background-color: #5A5A5A !important;
+		}
+		#google-news {
+			display: block;
+			padding-bottom: 30px;	
+		}
+		#search {
+			display: none;
+		}
+		.carousel-container {
+			display: none;
+		}
+		.card {
+			border-radius: 5px;
+			border: 1px solid #b7b6b4;
+			background-color: #f4f4f3;
+			padding-bottom: 15px;
+		}
+		.card-position {
+			padding-top: 100px;
+		}
+		.card-grid {
+			display: grid;
+			grid-gap: 8px;
+			height: 310px;
+			grid-template-columns: 160px 160px 160px 160px;
+			margin: auto;
+			width: 672px;
+			padding-left: 150px;
+		}
+		.container {
+			padding: 10px 3px 5px 3px;
+			height: 190px;
+			overflow: hidden;
+			text-align: center;
+			padding-bottom: 8px;
+		}
+		hr.new3 {
+			border-top: 1px dotted black;
+			width: 672px;
+		}
+		.custom-text {
+			padding-left: 150px;
+			padding-top: 40px;
+			font-size: 25px;
+			font-family: "Georgia";
+		}
+		.image-bottom-text {
+			position: absolute;
+			width: 375px;
+			background: rgba(0, 0, 0, 0.5);
+			color: white;	
+		}
+		.anchor-decoration {
+			color: black;
+			text-decoration: none;
+		}
+		.right-2 {
+			width: 600px; 
+			height: 125px; 
+			background-color: #f4f4f3;
+			margin-bottom: 20px;
+			padding: 20px;
+		}
+		.button-position {
+			position:fixed;
+		}
+		.search-news-card {
+  			width: 540px;
+  			border-radius: 5px;
+  			margin-bottom: 10px;
+  			margin-top: 10px;
+  			border: 1px solid #b7b6b4;
+  			background-color: #f4f4f3;
+  			cursor: pointer !important;
+		}
+		.search-news-card:hover {
+  			box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+		}
+		.show-more {
+			width: 95px;
+			height: 20px;
+			border: 0px;
+			background-color: #f4f4f3;	
+		}
+
+		.close {
+			position: absolute;
+			right: 5px;
+		}
+		.search-news-items {
+			position: relative;
+			margin: 10px;
+		}
+
+		.news-card-image {
+			display: inline-block;
+			vertical-align: top;
+		}
+		.news-card-text {
+			display: inline-block;
+			vertical-align: top;
+			text-align: left;
+			margin-left: 10px;
+			width: 400px;
+			line-height: 1.6;
+		}
+		.card-text-heading {
+			font-size: 16px;
+			font-family: "Georgia";
+
+		}
+		.card-text-content {
+			font-size: 14px;
+			font-family: "Georgia";
+		}
+		.card-text-paragraph {
+			margin-top: 1.6px;
+			line-height: normal;
+			font-size: 14px;
+			font-family: "Georgia";
+		}
+
+		.card-text-overflow {
+			text-overflow: ellipsis;
+			white-space: nowrap; 
+			overflow: hidden;
+		}
+
+		.display-content {
+			display: block;
+		}
+
+		.hide-content{
+			display: none;
+		}
+		.search-clear {
+			height: 25px;
+			background-color: #eeeeee;
+			color: black;
+			width: 60px;
+			border: 0px;
+		}
+
+		.search-clear:hover {
+			background-color: #4CAF50 !important;
+			transition: .5s !important;
+			color: white !important;
+		}
+		label {
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+	
+	</style>
+
+</head>
+<body>
+
+	<div id="google-news">
+		<div align="center" class="row-1">
+			<div class="column-1 left-1">
+				<div class="button-position">
+					<div class="vertical-button-group">
+						<button class="button selected-menu-item" onclick="newsDisplay()" style="border-bottom: 0px;">Google News</button>
+						<button class="button" onclick="searchDisplay()">Search</button>
+					</div>
+				</div>
+			</div>
+			<div class="column-1 middle-1">	
+			</div>
+			<div id="my_dataviz" class="column-1 right-1">
+			</div>
+		</div>
+
+
+
+		<div align="center" class="custom-text">
+			<b>CNN</b>
+			<hr class="new3">
+		</div>
+		<div class="card-grid">
+		</div>
+
+
+		
+		<div align="center" class="custom-text" style="padding-top: 30px">
+			<b>Fox News</b>
+			<hr class="new3">
+		</div>
+		<div class="card-grid">
+		</div>
+	</div>
+
+
+	<div id="search">
+		<div align="center" class="row-1">
+			<div class="column-1 left-1" style="padding-right: 45px; height: 125px;">
+				<div class="button-position">
+					<div class="vertical-button-group">
+						<button class="button" onclick="newsDisplay()" style="border-bottom: 0px;">Google News</button>
+						<button class="button selected-menu-item" onclick="searchDisplay()">Search</button>
+					</div>
+				</div>
+			</div>
+			<div class="column-1">	
+				<form class="right-2" onsubmit="return false;" name="myForm">
+					<div>
+						<label>Keyword<span style="color: red;">*</span></label>
+						<input type="text" name="keyword" id="keyword" style="padding-left: 5px;" required>
+						<label>From<span style="color: red;">*</span></label>
+						<input type="date" name="from" id="from" required>
+						<label>To<span style="color: red;">*</span></label>
+						<input type="date" name="to" id="to" required>
+					</div>
+					<div style="padding-top: 20px">
+						<label>Category</label>
+						<select id="category" name="category" onchange="getSources(this.value)" style="min-width: 105px; text-align: center">
+							<option value="all">all</option>
+							<option value="business">business</option>
+							<option value="entertainment">entertainment</option>
+							<option value="general">general</option>
+							<option value="health">health</option>
+							<option value="science">science</option>
+							<option value="sports">sports</option>
+							<option value="technology">technology</option>
+						</select>
+						<label>Source</label>
+						<select id="source" name="source" style="min-width: 105px; text-align: center">
+							<option value="all">all</option>
+						</select>
+					</div>
+					<div style="padding-top: 20px;">
+						<input class="search-clear" type="submit" name="submit" value="Search" onclick="onSearch()"></input>
+						<input class="search-clear" type="button" name="clear" value="Clear" onclick="clearAllSearch()"></input>
+					</div>
+				</form>
+				<div id="news-cards-column">
+				</div>
+				<div>
+					<button id="show-more-less-button" class="show-more hide-content" style="margin-bottom: 20px;">Show More</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+		var timeOut = null;
+		var topHeadlinesJson;
+
+
+		function getTopHeadlines() {
+  			let xhr = new XMLHttpRequest();
+  			xhr.open("GET","/top_headlines",true);
+  			xhr.onreadystatechange = function() {
+	    		if(xhr.readyState == 4 && xhr.status == 200) {
+	      			topHeadlinesJson = JSON.parse(xhr.responseText);
+	      			displayCarousel();
+	      			displayCNN();
+	      			displayFox();
+	      			displayWordCloud();
+	    		}
+  			}
+  			xhr.send();
+		}
+
+		getTopHeadlines();
+
+		function clearAllSearch(){
+			document.getElementById("keyword").value = "";
+			document.getElementById("category").value = "all";
+			document.getElementById("source").value = "all";
+			document.getElementById("news-cards-column").innerHTML = "";
+			document.getElementById("show-more-less-button").classList.add("hide-content");
+			var today = new Date();
+			var prevDate = new Date();
+			prevDate.setDate(prevDate.getDate() - 7);
+			document.getElementById("to").value = today.getFullYear() + "-" + ((today.getMonth() < 8) ? ('0' + (today.getMonth() + 1)) : (today.getMonth() + 1)) + "-"+ ((today.getDate() < 10) ? ('0' + today.getDate()) : (today.getDate())) ;
+			document.getElementById("from").value = prevDate.getFullYear() + "-" + ((prevDate.getMonth() < 8) ? ('0' + (prevDate.getMonth() + 1)) : (prevDate.getMonth() + 1)) + "-"+ ((prevDate.getDate() < 10) ? ('0' + prevDate.getDate()) : (prevDate.getDate())) ;
+			getSources("all");
+
+		}
+
+		function newsCardContract(event){
+			event.stopPropagation();
+			var currentCard = event.currentTarget.parentElement;
+			var paragraph = currentCard.querySelector(".card-text-paragraph");
+			var close = currentCard.querySelector(".close");
+			var content = currentCard.querySelectorAll(".card-text-content");
+			paragraph.classList.add("card-text-overflow");
+			content[0].classList.remove("display-content");
+			content[0].classList.add("hide-content");
+			content[1].classList.remove("display-content");
+			content[1].classList.add("hide-content");
+			content[2].classList.remove("display-content");
+			content[2].classList.add("hide-content");
+			content[3].classList.remove("display-content");
+			content[3].classList.add("hide-content");
+			close.classList.remove("display-content");
+			close.classList.add("hide-content");
+		}
+
+		function newsCardExpand(event){
+			var currentCard = event.currentTarget;
+			var paragraph = currentCard.querySelector(".card-text-paragraph");
+			var content = currentCard.querySelectorAll(".card-text-content");
+			var close = currentCard.querySelector(".close");
+			paragraph.classList.remove("card-text-overflow");
+			content[0].classList.add("display-content");
+			content[0].classList.remove("hide-content");
+			content[1].classList.add("display-content");
+			content[1].classList.remove("hide-content");
+			content[2].classList.add("display-content");
+			content[2].classList.remove("hide-content");
+			content[3].classList.add("display-content");
+			content[3].classList.remove("hide-content");
+			close.classList.add("display-content");
+			close.classList.remove("hide-content");
+		}
+
+		function showLessNews(){
+			var newsCardsDiv = document.getElementById("news-cards-column");
+			var searchNewsCard = newsCardsDiv.querySelectorAll(".extra-news");
+			var length = searchNewsCard.length;
+			for (let i = 0 ; i < length ; i++){
+				searchNewsCard[i].classList.add("hide-content");
+				searchNewsCard[i].classList.remove("display-content");
+			}
+			document.getElementById("show-more-less-button").innerHTML = "Show More";
+			document.getElementById("show-more-less-button").removeEventListener("click", showLessNews);
+			document.getElementById("show-more-less-button").addEventListener("click", showMoreNews);
+
+		}
+
+
+
+		function showMoreNews(){
+			var newsCardsDiv = document.getElementById("news-cards-column");
+			var searchNewsCard = newsCardsDiv.querySelectorAll(".extra-news");
+			var length = searchNewsCard.length;
+			for (let i = 0 ; i < length; i++){
+				searchNewsCard[i].classList.remove("hide-content");
+				searchNewsCard[i].classList.add("display-content");
+			}
+			document.getElementById("show-more-less-button").innerHTML = "Show Less";
+			document.getElementById("show-more-less-button").removeEventListener("click", showMoreNews);
+			document.getElementById("show-more-less-button").addEventListener("click", showLessNews);
+		}
+
+
+		var customSearchResults;
+
+		function getCustomNews() {
+			let xhr = new XMLHttpRequest();
+  			xhr.open("GET", "/custom_request/"+keyword+"/"+from+"/"+to+"/"+source, true);
+  			xhr.onreadystatechange = function() {
+	    		if(xhr.readyState == 4 && xhr.status == 200) {
+	      			customSearchResults = JSON.parse(xhr.responseText);
+	      			appendNewsCards();
+	    		}
+  			}
+  			xhr.send();
+		}
+		
+		function onSearch(){
+			form = document.forms["myForm"];
+
+			if (form["keyword"].value.trim().length === 0 || form["from"].value.length === 0  || form["to"].value.length === 0){
+				return false;
+			}
+
+			keyword = form["keyword"].value.trim();
+			from = form["from"].value;
+			to = form["to"].value;
+			category = form["category"].value;
+			source = form["source"].value;
+
+			if (new Date(form["from"].value) >  new Date(form["to"].value)){
+				alert("Incorrect time");
+				return false;
+			}
+			getCustomNews();
+		}
+
+		function appendNewsCards(){
+			if (document.getElementById("show-more-less-button").classList.contains("display-content")){			
+				document.getElementById("show-more-less-button").classList.remove("display-content");
+				document.getElementById("show-more-less-button").classList.add("hide-content");	
+				document.getElementById("show-more-less-button").innerHTML = "Show More";
+				document.getElementById("show-more-less-button").removeEventListener("click", showMoreNews);
+				document.getElementById("show-more-less-button").removeEventListener("click", showLessNews);
+				
+			}
+			if (customSearchResults.hasOwnProperty("exception")){
+				if (customSearchResults.exception.hasOwnProperty("message")){
+					alert(customSearchResults.exception.message);
+					return false;
+				}
+			}
+			var newsCardsDiv = document.getElementById("news-cards-column");
+			if (customSearchResults.length === 0){
+				newsCardsDiv.innerHTML = "No Results";
+				return false;
+			}
+			else{
+				var txt;
+				newsCardsDiv.innerHTML = "";
+				for (let i = 0 ; i < customSearchResults.length ; i++){
+					if (i >= 5){
+						txt = ('<div class="search-news-card hide-content extra-news" onclick="newsCardExpand(event)">');
+					}
+					else{
+						txt = ('<div class="search-news-card" onclick="newsCardExpand(event)">');
+					}
+					txt += ('<div class="search-news-items">');
+					txt += ('<span class="close hide-content" onclick="newsCardContract(event)">&times;</span>');
+					txt += ('<div class="news-card-image">');
+					txt += ('<img src="' + customSearchResults[i]["urlToImage"] + '"style="height: 50px; width: 54px;">');
+					txt += ('</div>');
+					txt += ('<div class="news-card-text">');
+					txt += ('<div class="card-text-heading"><b>' + customSearchResults[i]["title"] + '</b></div>');
+					txt += ('<div class="card-text-content hide-content"><b>Author:</b> ' + customSearchResults[i]["author"] + '</div>');
+					txt += ('<div class="card-text-content hide-content"><b>Source:</b> ' + customSearchResults[i]["source"]["name"] + '</div>');
+					txt += ('<div class="card-text-content hide-content"><b>Date:</b> ' + customSearchResults[i]["publishedAt"].slice(5,7)+"/"+customSearchResults[i]["publishedAt"].slice(8,10)+"/"+customSearchResults[i]["publishedAt"].slice(0,4) + '</div>');
+					txt += ('<div class="card-text-paragraph card-text-overflow">' + customSearchResults[i]["description"] + '</div>');
+					txt += ('<div class="card-text-content hide-content"><a href="' + customSearchResults[i]["url"] + '" target="_blank">See Original Post</a></div>');
+					txt += ('</div>');
+					txt += ('</div>');
+					txt += ('</div>');
+					txt += ('</div>');	
+					newsCardsDiv.innerHTML += txt;
+				}
+				if (customSearchResults.length > 5){
+					document.getElementById("show-more-less-button").classList.add("display-content");
+					document.getElementById("show-more-less-button").classList.remove("hide-content");
+					document.getElementById("show-more-less-button").addEventListener("click", showMoreNews);
+				}
+			} 
+		}
+
+
+
+		var myIndex = 0;
+		function carousel(){
+			var i;
+			var x = document.getElementsByClassName("carousel-container");
+			for(i = 0 ; i <  x.length ; i++){
+				x[i].style.display = "none";
+			}
+			myIndex++;
+			if (myIndex > x.length) {
+				myIndex = 1;
+			}
+			x[myIndex - 1].style.display = "block";
+			x[myIndex - 1].getElementsByClassName("image-bottom-text")[0].style.top = (230 - x[myIndex - 1].getElementsByClassName("image-bottom-text")[0].offsetHeight+ "px");
+			timeOut = setTimeout(carousel, 2000);
+		}
+
+		function displayCarousel(){
+
+			var cardGrid = document.querySelector(".column-1.middle-1");
+			var txt = "";
+			cardGrid.innerHTML = "";
+			for (let i = 0 ; i < 5 ; i++){
+				txt += ('<a href="'+topHeadlinesJson["slideshow-articles"][i]["url"]+'"target="_blank" class="anchor-decoration">');
+				txt += ('<div class="carousel-container">');
+				txt += ('<img class="carousel-google-news" src="'+topHeadlinesJson["slideshow-articles"][i]["urlToImage"]+'"style="width:375px; height:230px">');
+				txt += ('<div class="image-bottom-text"><b>');
+				txt += (topHeadlinesJson["slideshow-articles"][i]["title"]+'</b>')
+				txt += ('<div style="padding-top: 10px;">'+topHeadlinesJson["slideshow-articles"][i]["description"]+'</div>')
+				txt += ('</div></div></a>');
+			}
+			cardGrid.innerHTML = txt;
+			carousel();
+		}
+
+
+		function displayCNN(){
+			var cardGrid = document.getElementsByClassName("card-grid")[0];
+			var txt = "";
+			for (let i = 0 ; i < 4 ; i++){
+				txt += ('<a href="'+topHeadlinesJson["cnn-articles"][i]["url"]+'"target="_blank" class="anchor-decoration">');
+				txt += ('<div class="card">');
+				txt += ('<img src="'+topHeadlinesJson["cnn-articles"][i]["urlToImage"]+'"style="width:100%; border-radius: 5px; height: 120px;">');
+				txt += ('<div class="container"><b>');
+				txt += (topHeadlinesJson["cnn-articles"][i]["title"]);
+				txt += ('</b><div style="padding-top: 10px">'+topHeadlinesJson["cnn-articles"][i]["description"]+'</div>')
+				txt += ('</div></div></a>');
+			}
+			cardGrid.innerHTML = txt;
+		}
+
+		function displayFox(){
+			var cardGrid = document.getElementsByClassName("card-grid")[1];
+			var txt = "";
+			for (let i = 0 ; i < 4 ; i++){
+				txt += ('<a href="'+topHeadlinesJson["fox-articles"][i]["url"]+'"target="_blank" class="anchor-decoration">');
+				txt += ('<div class="card">');
+				txt += ('<img src="'+topHeadlinesJson["fox-articles"][i]["urlToImage"]+'"style="width:100%; border-radius: 5px; height: 120px;">');
+				txt += ('<div class="container"><b> ');
+				txt += topHeadlinesJson["fox-articles"][i]["title"];
+				txt += ('</b><div style="padding-top: 10px">'+topHeadlinesJson["fox-articles"][i]["description"]+'</div>')
+				txt += ('</div></div></a>');
+			}
+			cardGrid.innerHTML = txt;
+		}
+
+		function newsDisplay(){
+			document.getElementById("google-news").style.display = "block";
+			document.getElementById("search").style.display = "none";
+			if(timeOut != null){
+				clearTimeout(timeOut); 
+				timeOut = setTimeout(carousel, 2000);
+			}
+		}
+
+		function searchDisplay(){
+			var today = new Date();
+			var prevDate = new Date();
+			prevDate.setDate(prevDate.getDate() - 7);
+			document.getElementById("to").value = today.getFullYear() + "-" + ((today.getMonth() < 8) ? ('0' + (today.getMonth() + 1)) : (today.getMonth() + 1)) + "-"+ ((today.getDate() < 10) ? ('0' + today.getDate()) : (today.getDate())) ;
+			document.getElementById("from").value = prevDate.getFullYear() + "-" + ((prevDate.getMonth() < 8) ? ('0' + (prevDate.getMonth() + 1)) : (prevDate.getMonth() + 1)) + "-"+ ((prevDate.getDate() < 10) ? ('0' + prevDate.getDate()) : (prevDate.getDate())) ;
+			document.getElementById("google-news").style.display = "none";
+			document.getElementById("search").style.display = "block";
+			if(timeOut != null){
+				clearTimeout(timeOut); 
+			}
+		}
+
+		getSources("all");
+
+
+		var listOfSources = null;
+		function getSources(receivedCategory){
+			let xhr = new XMLHttpRequest();
+  			xhr.open("GET", "/get_sources/" + receivedCategory, true);
+  			xhr.onreadystatechange = function() {
+	    		if(xhr.readyState == 4 && xhr.status == 200) {
+	      			listOfSources = JSON.parse(xhr.responseText);
+	      			console.log(listOfSources);
+	      			buildSources();
+	    		}
+  			}
+  			xhr.send();
+  		}
+
+  		function buildSources(){
+			var currentSources = document.getElementById("source");
+			var length = currentSources.options.length - 1;
+			for(let i = length ; i >= 0 ; i--){
+				currentSources.remove(i);
+			}
+			var option = document.createElement("option");
+			option.text = "all";
+			option.id = "all";
+			document.getElementById("source").add(option);
+			if (listOfSources !== null){
+				for (let i = 0 ; i < listOfSources.length ; i++){
+					var option = document.createElement("option");
+					option.text = listOfSources[i]["name"];
+					option.value = listOfSources[i]["id"];
+					document.getElementById("source").add(option);
+					
+				} 
+			} 
+		}
+
+
+
+		function displayWordCloud(){
+			var myWords = topHeadlinesJson["sorted-top-words"];
+			var layout = d3.layout.cloud()
+			    .size([250, 230])
+			    .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+			    .padding(5)
+			    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+			    .font("Impact")
+			    .fontSize(function(d) { return d.size; })
+			    .on("end", draw);
+
+			layout.start();
+
+			function draw(words) {
+			  d3.select("#my_dataviz").append("svg")
+			      .attr("width", layout.size()[0])
+			      .attr("height", layout.size()[1])
+			    .append("g")
+			      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+			    .selectAll("text")
+			      .data(words)
+			    .enter().append("text")
+			      .style("font-size", function(d) { return d.size + "px"; })
+			      .style("font-family", "Impact")
+			      .attr("text-anchor", "middle")
+			      .attr("transform", function(d) {
+			        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+			      })
+			      .text(function(d) { return d.text; });
+			}
+		/*	// List of words
+			var myWords = topHeadlinesJson["sorted-top-words"];
+			// set the dimensions and margins of the graph
+			var margin = {top: 10, right: 10, bottom: 10, left: 10},
+			width = 250 - margin.left - margin.right,
+			height = 230 - margin.top - margin.bottom;
+
+			// append the svg object to the body of the page
+			var svg = d3.select("#my_dataviz").append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform",
+				"translate(" + margin.left + "," + margin.top + ")");
+
+			// Constructs a new cloud layout instance. It run an algorithm to find the position of words that suits your requirements
+			// Wordcloud features that are different from one word to the other must be here
+			var layout = d3.layout.cloud()
+			.size([width, height])
+			.words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+			  .padding(5)        //space between words
+			  .rotate(function() { return ~~(Math.random() * 2) * 90; })
+			  .fontSize(function(d) { return d.size; })      // font size of words
+			  .on("end", draw);
+			  layout.start();
+
+			// This function takes the output of 'layout' above and draw the words
+			// Wordcloud features that are THE SAME from one word to the other can be here
+			function draw(words) {
+				svg
+				.append("g")
+				.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+				.selectAll("text")
+				.data(words)
+				.enter().append("text")
+				.style("font-size", function(d) { return d.size+"px"; })
+				.style("fill", "#000000")
+				.attr("text-anchor", "middle")
+				.style("font-family", "Impact")
+				.attr("transform", function(d) {
+					return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+				})
+				.text(function(d) { return d.text; });
+			}*/
+		}
+</script>
+
+</body>
+
+</html>
